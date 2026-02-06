@@ -1,0 +1,67 @@
+# ---------------------------
+# Python
+# ---------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# ---------------------------
+# Virtual Environments
+# ---------------------------
+venv/
+env/
+.venv/
+ENV/
+
+# ---------------------------
+# Environment Variables
+# ---------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------
+# FastAPI / Uvicorn
+# ---------------------------
+*.log
+logs/
+
+# ---------------------------
+# Database
+# ---------------------------
+*.sqlite3
+*.db
+
+# ---------------------------
+# Migrations (optional)
+# Uncomment if you DON'T want migrations tracked
+# alembic/versions/
+
+# ---------------------------
+# Pytest / Coverage
+# ---------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---------------------------
+# IDE / Editor
+# ---------------------------
+.vscode/
+.idea/
+*.swp
+
+# ---------------------------
+# OS Files
+# ---------------------------
+.DS_Store
+Thumbs.db
+
+# ---------------------------
+# Build / Distribution
+# ---------------------------
+build/
+dist/
+*.egg-info/
