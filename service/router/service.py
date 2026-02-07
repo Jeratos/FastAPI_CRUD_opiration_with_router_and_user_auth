@@ -4,19 +4,20 @@ from ..database import get_db
 from .. import models
 from ..schema import ServiceSchema,ServiceTitleData
 from typing import List
+from ..auth import get_current_user
 router= APIRouter(
     prefix="/service",
     tags=["Service"])
 
 @router.get("/",status_code=status.HTTP_200_OK, response_model=List[ServiceTitleData] )
-def all_service(db: Session = Depends(get_db)):
+def all_service(db: Session = Depends(get_db),current_user: models.User = Depends(get_current_user)):
     data= db.query(models.Service).all()
     return data
 
 
 #single data by ID
 @router.get("/{id}",status_code=status.HTTP_200_OK)  
-def get_service(id: int,response: Response, db: Session = Depends(get_db)):
+def get_service(id: int,response: Response, db: Session = Depends(get_db),current_user: models.User = Depends(get_current_user)):
     data= db.query(models.Service).filter(models.Service.id == id).first()
     #error status code 
     if not data:    
@@ -27,7 +28,7 @@ def get_service(id: int,response: Response, db: Session = Depends(get_db)):
 
 # single data by brand name
 @router.get("/by-brand/{brand}")
-def get_service_by_brand(brand: str, db: Session = Depends(get_db)):
+def get_service_by_brand(brand: str, db: Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
     data = (
         db.query(models.Service)
         .filter( models.Service.more_data.op("->>")("brand") == brand)
@@ -37,7 +38,7 @@ def get_service_by_brand(brand: str, db: Session = Depends(get_db)):
 
 #insert data in database
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_service(post: bool,body: ServiceSchema,userid:int,db: Session = Depends(get_db)):
+def create_service(post: bool,body: ServiceSchema,userid:int,db: Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
     if post:
         new_service = models.Service(title=body.title, description=body.description, productimage=body.productimage, isapprove=body.isapprove, more_data=body.more_data, user_id=userid)
         db.add(new_service)
@@ -51,7 +52,7 @@ def create_service(post: bool,body: ServiceSchema,userid:int,db: Session = Depen
 #delete data
 
 @router.delete("/{id}",status_code=status.HTTP_204_NO_CONTENT)
-def delete_service(id: int,response: Response, db: Session = Depends(get_db)):
+def delete_service(id: int,response: Response, db: Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
     data= db.query(models.Service).filter(models.Service.id == id).first()
     if not data:
         response.status_code = status.HTTP_404_NOT_FOUND
@@ -62,7 +63,7 @@ def delete_service(id: int,response: Response, db: Session = Depends(get_db)):
 
 #update data all data
 @router.put("/updateall/{id}",status_code=status.HTTP_200_OK)
-def update(id,body: ServiceSchema, db: Session = Depends(get_db)):
+def update(id,body: ServiceSchema, db: Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
     data= db.query(models.Service).filter(models.Service.id == id).update(dict(body))
     db.commit()
     return {"data": "Service updated","satut":"success"}
@@ -81,7 +82,7 @@ def update(id,body: ServiceSchema, db: Session = Depends(get_db)):
 # ///////////////////////////or ///////////////////////                
 
 @router.put("/{id}",status_code=status.HTTP_200_OK)
-def update(id, isapprove: bool, db: Session = Depends(get_db)):
+def update(id, isapprove: bool, db: Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
     data= db.query(models.Service).filter(models.Service.id == id)
     if not data.first():
        raise HTTPException(status_code=404, detail="Service not found")
